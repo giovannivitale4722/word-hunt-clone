@@ -1,0 +1,565 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #3d5a47;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.game-header {
+    background: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.words-count, .score-display {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #2d2318;
+}
+
+.timer-display {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #2d2318;
+}
+
+.skip-button {
+    background: #ff6b9d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.skip-button:hover {
+    background: #ff4081;
+}
+
+.skip-button:active {
+    transform: scale(0.95);
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 70px);
+    padding: 20px;
+}
+
+h1 {
+    display: none;
+}
+
+.board-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.board {
+    display: inline-grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    padding: 8px;
+    background: transparent;
+    border-radius: 0;
+    position: relative;
+    user-select: none;
+    touch-action: none;
+}
+
+.tile {
+    width: 68px;
+    height: 68px;
+    background: 
+        linear-gradient(0deg, 
+            transparent 0%, 
+            rgba(0, 0, 0, 0.06) 10%, 
+            transparent 20%,
+            rgba(0, 0, 0, 0.04) 35%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.08) 65%,
+            transparent 75%,
+            rgba(0, 0, 0, 0.05) 90%,
+            transparent 100%
+        ),
+        linear-gradient(180deg,
+            #d9c3a1 0%,
+            #ccb084 30%,
+            #c4a777 70%,
+            #b99d6e 100%
+        );
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d2318;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    position: relative;
+}
+
+.tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 2px,
+            transparent 4px,
+            rgba(0, 0, 0, 0.035) 4px,
+            transparent 6px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(180, 150, 110, 0.2) 0px,
+            transparent 3px,
+            transparent 12px,
+            rgba(160, 130, 90, 0.15) 14px,
+            transparent 16px,
+            rgba(170, 140, 100, 0.12) 28px
+        );
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.tile:hover {
+    transform: scale(1.02);
+}
+
+.tile.selected {
+    background: 
+        linear-gradient(0deg, 
+            transparent 0%, 
+            rgba(0, 0, 0, 0.03) 15%, 
+            transparent 30%,
+            rgba(0, 0, 0, 0.02) 45%,
+            transparent 60%,
+            rgba(0, 0, 0, 0.04) 75%,
+            transparent 85%,
+            rgba(0, 0, 0, 0.02) 95%
+        ),
+        linear-gradient(180deg,
+            #f8f8f8 0%,
+            #f0f0f0 50%,
+            #e8e8e8 100%
+        );
+    transform: scale(0.98);
+}
+
+.tile.found {
+    background: #ff6b9d;
+    color: white;
+    animation: found-pulse 0.5s ease;
+}
+
+/* Remove the found tile styling - we don't highlight anymore */
+
+@keyframes found-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Word popup */
+.word-popup {
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #c8f5c8;
+    padding: 15px 35px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    animation: popup-appear 0.2s ease, popup-disappear 0.2s ease 1.3s forwards;
+    text-align: center;
+}
+
+.word-popup-word {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d2318;
+    margin-bottom: 5px;
+}
+
+.word-popup-points {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d7a2d;
+}
+
+@keyframes popup-appear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes popup-disappear {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* End game overlay */
+.end-game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fade-in 0.5s ease;
+}
+
+.end-game-content {
+    text-align: center;
+    padding: 40px;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.end-game-score {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.words-found-list {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.words-found-list h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.word-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.word-item-word {
+    font-weight: 600;
+}
+
+.word-item-points {
+    color: #c8f5c8;
+}
+
+.end-game-message {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.8;
+    margin-top: 40px;
+}
+
+.message-word {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 15px;
+    opacity: 0;
+    animation: word-appear 0.5s ease forwards;
+}
+
+.found-word-msg {
+    background: #ff6b9d;
+    color: white;
+}
+
+.missing-word-msg {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.final-question {
+    margin-top: 40px;
+    font-size: 3rem;
+    color: #ff6b9d;
+    animation: question-appear 1s ease 0.5s forwards;
+    opacity: 0;
+}
+
+.answer-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    animation: buttons-appear 0.5s ease forwards;
+}
+
+.answer-btn {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.yes-btn {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4081 100%);
+    color: white;
+}
+
+.yes-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+}
+
+.no-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.no-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.celebration {
+    animation: celebration-appear 0.5s ease forwards;
+}
+
+.celebration-text {
+    font-size: 4rem;
+    color: #ff6b9d;
+    margin-bottom: 20px;
+    animation: bounce 0.6s ease infinite;
+}
+
+.fk-message {
+    font-size: 5rem;
+    font-weight: 900;
+    color: #ff6b9d;
+    margin-bottom: 20px;
+    text-transform: lowercase;
+}
+
+.celebration-subtext {
+    font-size: 2rem;
+    color: white;
+    margin-top: 20px;
+}
+
+.retry-btn {
+    margin-top: 30px;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: #ff6b9d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+    background: #ff4081;
+    transform: scale(1.05);
+}
+
+.flower-confetti {
+    position: fixed;
+    top: -50px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear forwards;
+}
+
+@keyframes buttons-appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes celebration-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes word-appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes question-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#selection-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.found-words {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    border-radius: 12px;
+    min-width: 300px;
+}
+
+/* Hide found words section */
+.found-words {
+    display: none;
+}
+
+.found-words h3 {
+    color: white;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+#found-words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.found-word {
+    background: #ff6b9d;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    animation: slide-in 0.3s ease;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .tile {
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+        border-radius: 10px;
+    }
+    
+    .board {
+        gap: 6px;
+    }
+}

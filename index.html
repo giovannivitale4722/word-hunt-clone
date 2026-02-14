@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Hunt - Valentine's Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-header">
+        <div class="header-info">
+            <div class="words-count">WORDS: <span id="words-count">0</span></div>
+            <div class="score-display">SCORE: <span id="score-display">0</span></div>
+        </div>
+        <div class="timer-display"><span id="timer">1:00</span></div>
+        <button id="skip-btn" class="skip-button">Skip to End</button>
+    </div>
+    <div class="container">
+        <div class="board-wrapper">
+            <div id="board" class="board"></div>
+            <canvas id="selection-canvas"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
