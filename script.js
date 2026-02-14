@@ -383,9 +383,12 @@ function showEndGameAnimation() {
     const overlay = document.createElement('div');
     overlay.className = 'end-game-overlay';
     
-    // Build words found list
+    // Build words found list - sorted by points (highest first)
     let wordsListHTML = '';
-    foundWords.forEach((points, word) => {
+    const sortedWords = Array.from(foundWords.entries())
+        .sort((a, b) => b[1] - a[1]); // Sort by points descending
+    
+    sortedWords.forEach(([word, points]) => {
         wordsListHTML += `
             <div class="word-item">
                 <span class="word-item-word">${word}</span>
@@ -399,7 +402,9 @@ function showEndGameAnimation() {
             <div class="end-game-score">Final Score: ${totalScore}</div>
             <div class="words-found-list">
                 <h3>Words Found (${foundWords.size})</h3>
-                ${wordsListHTML || '<div style="color: rgba(255,255,255,0.5);">No words found</div>'}
+                <div class="words-scroll-container">
+                    ${wordsListHTML || '<div style="color: rgba(255,255,255,0.5);">No words found</div>'}
+                </div>
             </div>
             <div class="end-game-message" id="end-message"></div>
         </div>
