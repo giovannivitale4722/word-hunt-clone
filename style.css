@@ -290,7 +290,9 @@ h1 {
 .words-scroll-container {
     max-height: 260px;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     /* Visual hint that content is scrollable */
     border-radius: 8px;
     padding-right: 5px;
@@ -593,7 +595,11 @@ h1 {
     }
 
     .words-scroll-container {
+        height: 220px;
         max-height: 220px;
+        overflow-y: scroll; /* Force scrollbar visibility */
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
     }
 
     .words-found-list h3 {
