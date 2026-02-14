@@ -411,6 +411,33 @@ function showEndGameAnimation() {
     `;
     document.body.appendChild(overlay);
     
+    // Fix mobile scrolling - prevent overlay scroll when touching words list
+    const wordsScrollContainer = document.querySelector('.words-scroll-container');
+    if (wordsScrollContainer) {
+        let touchStartY = 0;
+        
+        wordsScrollContainer.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        wordsScrollContainer.addEventListener('touchmove', (e) => {
+            const scrollTop = wordsScrollContainer.scrollTop;
+            const scrollHeight = wordsScrollContainer.scrollHeight;
+            const clientHeight = wordsScrollContainer.clientHeight;
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchY - touchStartY;
+            
+            // Check if we're at the top/bottom of the scroll container
+            const atTop = scrollTop === 0 && deltaY > 0;
+            const atBottom = scrollTop + clientHeight >= scrollHeight && deltaY < 0;
+            
+            // If scrolling within bounds, prevent overlay from scrolling
+            if (!atTop && !atBottom) {
+                e.stopPropagation();
+            }
+        }, { passive: false });
+    }
+    
     // Animate the message
     setTimeout(() => {
         animateMessage();
