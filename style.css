@@ -288,10 +288,14 @@ h1 {
 }
 
 .words-scroll-container {
-    /* No max-height or overflow - let content flow naturally */
-    /* The overlay itself handles scrolling */
+    max-height: 260px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     border-radius: 8px;
     padding-right: 5px;
+    position: relative;
+    width: 100%;
 }
 
 .word-item {
@@ -591,7 +595,12 @@ h1 {
     }
 
     .words-scroll-container {
-        /* Let content flow - overlay scrolls instead */
+        min-height: 100px;
+        max-height: 220px;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        width: 100%;
     }
 
     .words-found-list h3 {
